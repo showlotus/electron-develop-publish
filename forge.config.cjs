@@ -1,15 +1,24 @@
-const { FusesPlugin } = require('@electron-forge/plugin-fuses');
-const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+const path = require('path')
+const { FusesPlugin } = require('@electron-forge/plugin-fuses')
+const { FuseV1Options, FuseVersion } = require('@electron/fuses')
 
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: path.join(__dirname, 'public/electron'),
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        // loading shown when setup
+        loadingGif: path.join(__dirname, './public/loading.gif'),
+        // packaged setup file icon
+        setupIcon: path.join(__dirname, 'public/electron.ico'),
+        //
+        iconUrl: path.join(__dirname, 'public/electron.ico'),
+      },
     },
     {
       name: '@electron-forge/maker-zip',
@@ -41,4 +50,4 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
-};
+}

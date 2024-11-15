@@ -1,8 +1,8 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { BrowserWindow, app, ipcMain, shell } from 'electron'
 import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
-import path from 'node:path'
 import os from 'node:os'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -42,7 +42,77 @@ let win: BrowserWindow | null = null
 const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
 
+function handleSquirrelEvent() {
+  if (process.argv.length === 1) {
+    return false
+  }
+
+  const ChildProcess = require('child_process')
+
+  const appFolder = path.resolve(process.execPath, '..')
+  const rootAtomFolder = path.resolve(appFolder, '..')
+  const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'))
+  const exeName = path.basename(process.execPath)
+
+  const spawn = function (command, args) {
+    let spawnedProcess, error
+
+    try {
+      spawnedProcess = ChildProcess.spawn(command, args, { detached: true })
+    } catch (error) {}
+
+    return spawnedProcess
+  }
+
+  const spawnUpdate = function (args) {
+    return spawn(updateDotExe, args)
+  }
+
+  const squirrelEvent = process.argv[1]
+  switch (squirrelEvent) {
+    case '--squirrel-install':
+    case '--squirrel-updated':
+      // Optionally do things such as:
+      // - Add your .exe to the PATH
+      // - Write to the registry for things like file associations and
+      //   explorer context menus
+
+      // Install desktop and start menu shortcuts
+      spawnUpdate(['--createShortcut', exeName])
+
+      setTimeout(app.quit, 1000)
+      return true
+
+    case '--squirrel-uninstall':
+      // Undo anything you did in the --squirrel-install and
+      // --squirrel-updated handlers
+
+      // Remove desktop and start menu shortcuts
+      spawnUpdate(['--removeShortcut', exeName])
+
+      setTimeout(app.quit, 1000)
+      return true
+
+    case '--squirrel-obsolete':
+      // This is called on the outgoing version of your app before
+      // we update to the new version - it's the opposite of
+      // --squirrel-updated
+
+      app.quit()
+      return true
+  }
+}
+
 async function createWindow() {
+  // if (require('electron-squirrel-startup')) {
+  //   console.log('require electron-squirrel-startup')
+  //   app.quit()
+  //   return
+  // }
+  if (handleSquirrelEvent()) {
+    app.quit()
+    return
+  }
   win = new BrowserWindow({
     title: 'Main window',
     icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
@@ -57,7 +127,8 @@ async function createWindow() {
     },
   })
 
-  if (VITE_DEV_SERVER_URL) { // #298
+  if (VITE_DEV_SERVER_URL) {
+    // #298
     win.loadURL(VITE_DEV_SERVER_URL)
     // Open devTool if the app is not packaged
     win.webContents.openDevTools()

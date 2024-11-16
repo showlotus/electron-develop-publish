@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 
 import { fetchGet, fetchUpdate } from '@/database/api'
 
@@ -14,6 +14,9 @@ const init = async () => {
     await db.MainTable.add({ value: 0 })
   }
   count.value = (await fetchGet())!
+  setTimeout(() => {
+    postMessage({ payload: 'removeLoading' }, '*')
+  }, 1500)
 }
 
 const increment = () => {
@@ -28,9 +31,7 @@ const reset = () => {
   })
 }
 
-onBeforeMount(() => {
-  init()
-})
+init()
 </script>
 
 <template>
@@ -55,7 +56,7 @@ onBeforeMount(() => {
         alt="Tailwindcss logo"
       />
     </a>
-    <a href="https://tailwindcss.com/" target="_blank">
+    <a href="https://dexie.org/" target="_blank">
       <img src="./assets/dexie.svg" class="logo dexie" alt="Dexie logo" />
     </a>
   </div>
@@ -93,6 +94,6 @@ onBeforeMount(() => {
 }
 
 .logo.dexie:hover {
-  filter: drop-shadow(0 0 2em #ffffffaa);
+  filter: drop-shadow(0 0 2em #ffca28aa);
 }
 </style>

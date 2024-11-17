@@ -14,9 +14,7 @@ const init = async () => {
     await db.MainTable.add({ value: 0 })
   }
   count.value = (await fetchGet())!
-  setTimeout(() => {
-    postMessage({ payload: 'removeLoading' }, '*')
-  }, 1500)
+  postMessage({ payload: 'removeLoading' }, '*')
 }
 
 const increment = () => {

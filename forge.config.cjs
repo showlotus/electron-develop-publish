@@ -5,7 +5,8 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses')
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: path.join(__dirname, 'public/electron'),
+    // no file extension required
+    icon: path.join(__dirname, 'public/app@256x256'),
   },
   rebuildConfig: {},
   makers: [
@@ -13,11 +14,11 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         // loading shown when setup
-        loadingGif: path.join(__dirname, './public/loading.gif'),
+        loadingGif: path.join(__dirname, './public/empty.gif'),
         // packaged setup file icon
-        setupIcon: path.join(__dirname, 'public/electron.ico'),
-        //
-        iconUrl: path.join(__dirname, 'public/electron.ico'),
+        setupIcon: path.join(__dirname, 'public/app.ico'),
+        // app icon
+        iconUrl: path.join(__dirname, 'public/app.ico'),
       },
     },
     {

@@ -60,17 +60,21 @@ const safeDOM = {
  * https://matejkustec.github.io/SpinThatShit
  */
 function useLoading() {
+  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  const loadingUrl = isDarkMode ? './loading-light.svg' : './loading-dark.svg'
   const div = document.createElement('div')
   div.innerHTML = /* html */ `<div class="preload-loading fixed inset-0 flex justify-center items-center bg-white">
-    <!-- <img src="./pixso_loading.gif" class="w-24" /> -->
-    <img src="./loading-light.svg" class="animate-spin w-24" />
+    <img src="${loadingUrl}" class="w-24" />
   </div>`
+
+  let isFinished = false
 
   return {
     appendLoading() {
-      safeDOM.append(document.body, div)
+      !isFinished && safeDOM.append(document.body, div)
     },
     removeLoading() {
+      isFinished = true
       safeDOM.remove(document.body, div)
     },
   }
@@ -79,10 +83,12 @@ function useLoading() {
 // ----------------------------------------------------------------------
 
 const { appendLoading, removeLoading } = useLoading()
-domReady().then(appendLoading)
+domReady().then(() => {
+  setTimeout(() => {
+    appendLoading
+  }, 500)
+})
 
 window.onmessage = (ev) => {
   ev.data.payload === 'removeLoading' && removeLoading()
 }
-
-// setTimeout(removeLoading, 4999)

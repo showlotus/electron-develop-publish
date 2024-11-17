@@ -104,18 +104,14 @@ function handleSquirrelEvent() {
 }
 
 async function createWindow() {
-  // if (require('electron-squirrel-startup')) {
-  //   console.log('require electron-squirrel-startup')
-  //   app.quit()
-  //   return
-  // }
   if (handleSquirrelEvent()) {
     app.quit()
     return
   }
   win = new BrowserWindow({
     title: 'Main window',
-    icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    // set window icon
+    icon: path.join(process.env.VITE_PUBLIC, 'app.ico'),
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production

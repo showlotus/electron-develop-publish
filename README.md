@@ -1,1 +1,1 @@
-# electron-vite-vue
+# electron-develop-publish

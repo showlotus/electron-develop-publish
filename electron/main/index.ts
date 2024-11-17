@@ -3,9 +3,12 @@ import { createRequire } from 'node:module'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { updateElectronApp } from 'update-electron-app'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+updateElectronApp()
 
 // The built directory structure
 //
